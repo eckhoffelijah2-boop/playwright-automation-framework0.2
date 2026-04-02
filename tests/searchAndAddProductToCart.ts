@@ -1,7 +1,7 @@
-const { test, expect } = require('@playwright/test');
-const {POManager} = require('../POM/POManager');
+import { test,expect,Locator,Page } from '@playwright/test';
+import {POManager} from '../POMts/POManager';
 
-test('add 2 AirPods to basket', async ({ page }) => {
+test('value stream - search and add product to cart', async ({ page }) => {
   const poManager = new POManager(page);
   const amazonHomePage = poManager.getAmazonHomePage();
   const airPodsPage = poManager.getAirPodsPage();

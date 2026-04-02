@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.only('Add product to cart via API (with fresh session)', async ({ page, request }) => {
+test('value stream - add product to cart via API and verify in UI', async ({ page, request }) => {
 
   // Open product page
   await page.goto('https://glogangworldwide.com/products/glo-gang-sun-socks-black');
