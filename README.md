@@ -4,7 +4,7 @@
 
 This project demonstrates a test automation framework built with Playwright. It includes both UI automation using TypeScript and API testing using JavaScript.
 
-The tests cover typical e-commerce scenarios such as adding products to a cart through the UI and through API requests, and then verifying the results in the UI.
+The framework focuses on automating key e-commerce user journeys (value streams), such as searching for a product, adding it to the cart, and removing it from the cart.
 
 ---
 
@@ -19,7 +19,7 @@ The tests cover typical e-commerce scenarios such as adding products to a cart t
 
 ## Framework Design
 
-The UI tests are built using the Page Object Model (POM). This separates page interactions from test logic.
+The UI tests are built using the Page Object Model (POM), which separates page interactions from test logic.
 
 Page objects contain:
 
@@ -31,15 +31,15 @@ Test files contain:
 * assertions
 * test flow
 
-This structure helps keep the code easier to maintain and reuse.
+This structure improves readability, reusability, and maintainability.
 
 ---
 
-## Test Scenarios
+## Test Scenarios (Value Streams)
 
-### Amazon AirPods UI Test
+### Search and Add Product to Cart (UI)
 
-File: `airpodsAmazonPOM.spec.ts`
+File: `searchAndAddProductToCart.spec.ts`
 
 Flow:
 
@@ -47,15 +47,29 @@ Flow:
 * Search for AirPods
 * Open the first product
 * Verify the product title
-* Add 2 items to the basket
+* Add items to the basket
 * Open the basket
-* Verify the product and quantity
+* Verify product and quantity
 
 ---
 
-### GloGang API and UI Test
+### Remove Product from Cart (UI)
 
-File: `apiAddSocksToCart.spec.js`
+File: `removeProductFromCart.spec.ts`
+
+Flow:
+
+* Search for product
+* Add product to cart
+* Navigate to basket
+* Remove product
+* Verify cart is empty
+
+---
+
+### Add Product to Cart via API and Verify in UI
+
+File: `addProductToCartViaApi.spec.js`
 
 Flow:
 
@@ -63,7 +77,7 @@ Flow:
 * Add item to cart via UI
 * Retrieve cart cookie
 * Send API request to add item to cart
-* Check response status
+* Validate response
 * Handle optional popup
 * Verify item appears in cart
 
@@ -71,11 +85,11 @@ Flow:
 
 ## API and UI Integration
 
-This project combines API and UI testing in a single flow.
+This project demonstrates combining API and UI testing in a single flow.
 
-The API is used to modify the application state directly, while the UI is used to verify what the user would see.
+The API is used to manipulate the application state directly, while the UI is used to verify the result from a user perspective.
 
-This approach improves speed and reduces flakiness compared to relying only on UI tests.
+This approach improves execution speed and reduces flakiness compared to relying only on UI tests.
 
 ---
 
@@ -96,7 +110,7 @@ npx playwright test
 Run a specific test:
 
 ```bash
-npx playwright test airpodsAmazonPOM.spec.ts
+npx playwright test searchAndAddProductToCart.spec.ts
 ```
 
 ---
@@ -105,14 +119,15 @@ npx playwright test airpodsAmazonPOM.spec.ts
 
 ```
 tests/
-  airpodsAmazonPOM.spec.ts
-  apiAddSocksToCart.spec.js
+  searchAndAddProductToCart.spec.ts
+  removeProductFromCart.spec.ts
+  addProductToCartViaApi.spec.js
 
-POMts/
+pageObjects/
   POManager.ts
+  AmazonHomepage.ts
   AirPodsPage.ts
   BasketPage.ts
-  AmazonHomepage.ts
 ```
 
 ---
@@ -120,12 +135,12 @@ POMts/
 ## Future Improvements
 
 * Convert API test to TypeScript
-* Add CI integration
-* Improve selector stability
+* Improve selector robustness
 * Add reporting
+* Extend value streams (e.g. update quantity, login flow)
 
 ---
 
 ## Author
 
-This project was created as part of learning test automation with Playwright, focusing on building maintainable and structured tests.
+This project was created as part of learning test automation with Playwright, with a focus on building maintainable and structured tests around real user flows.

@@ -1,28 +1,39 @@
-import { test,expect,Locator,Page } from '@playwright/test';
-import {POManager} from '../pageObjects/POManager';
+import { test, expect } from '@playwright/test';
+import { POManager } from '../pageObjects/POManager';
 
-test('value stream - search and add product to cart', async ({ page }) => {
+test('value stream - remove product from cart', async ({ page }) => {
   const poManager = new POManager(page);
   const amazonHomePage = poManager.getAmazonHomePage();
   const airPodsPage = poManager.getAirPodsPage();
   const basketPage = poManager.getBasketPage();
+
   const product = 'AirPods';
- // amazon home Page
+
+  // go to homepage
   await amazonHomePage.goTo();
+
+  // search product
   await amazonHomePage.validAirPodSearch(product);
- 
-  // airpods search page
+
+  // open first result
   await page.locator('.a-link-normal.s-no-outline').first().click();
-  
-  //airpods page
+
+  // verify product page
   await expect(airPodsPage.productTitle).toContainText(product);
+
+  // add to cart
   await airPodsPage.add2AirPodsToCart();
- 
-  //basket page
+
+  // go to basket
   await basketPage.goToBasket();
+
+  // verify item is in cart
   await expect(basketPage.cartItem).toContainText(product);
-  await expect(basketPage.quantityValue).toHaveText('2'); 
+
+  // remove item
+  await basketPage.removeItemFromCart();
+
+  // verify item is removed 
+  await expect(basketPage.cartItem).toHaveCount(0);
   
 });
-
-
