@@ -1,146 +1,245 @@
-# Playwright Automation Framework (UI and API)
+Playwright Automation Framework (UI, API, and Cucumber BDD)
+Overview
 
-## Overview
+This project demonstrates a test automation framework built with Playwright.
+It includes:
 
-This project demonstrates a test automation framework built with Playwright. It includes both UI automation using TypeScript and API testing using JavaScript.
+UI automation using Playwright and TypeScript
+API testing
+Cucumber BDD integration using Gherkin feature files
 
-The framework focuses on automating key e-commerce user journeys (value streams), such as searching for a product, adding it to the cart, and removing it from the cart.
+The framework automates key e-commerce value streams such as:
 
----
+searching for a product
+adding a product to the cart
+removing a product from the cart
 
-## Tech Stack
+The framework was designed with scalability and maintainability in mind using:
 
-* Playwright
-* TypeScript (UI tests and page objects)
-* JavaScript (API test)
-* Node.js
+Page Object Model (POM)
+reusable Cucumber step definitions
+hooks
+custom World constructor
+reusable locators
+parameterized scenarios
+Tech Stack
+Playwright
+TypeScript
+Cucumber (BDD)
+Gherkin
+Node.js
+Framework Design
 
----
-
-## Framework Design
-
-The UI tests are built using the Page Object Model (POM), which separates page interactions from test logic.
+The framework follows the Page Object Model (POM) design pattern.
 
 Page objects contain:
 
-* locators
-* actions
+locators
+reusable page actions
 
-Test files contain:
+Step definitions contain:
 
-* assertions
-* test flow
+business logic
+assertions
+reusable workflow steps
 
-This structure improves readability, reusability, and maintainability.
+Feature files contain:
 
----
+readable business scenarios written in Gherkin syntax
 
-## Test Scenarios (Value Streams)
+The framework also uses:
 
-### Search and Add Product to Cart (UI)
+Cucumber hooks (Before, After, AfterStep)
+Custom World constructor for scenario state management
+automatic screenshot capture on failed steps
 
-File: `searchAndAddProductToCart.spec.ts`
+This structure improves:
+
+readability
+maintainability
+scalability
+reusability
+Cucumber BDD Implementation
+
+The framework supports Behavior Driven Development (BDD) using Cucumber.
+
+Examples of implemented features:
+
+Search and add product to cart
+Remove product from cart
+
+The framework uses:
+
+reusable step definitions
+feature tags
+parameterized scenarios
+hooks for setup and cleanup
+custom World constructor instead of global variables
+
+Example feature:
+
+@Regression
+Scenario: search for product and adding it to cart
+
+  Given a Ecomerce application with a "AirPods" you can search and add to Cart
+  When search for "AirPods"
+  Then click on "AirPods"
+  When add "AirPods" to Cart
+  Then verify "AirPods" is in the Cart
+Test Scenarios (Value Streams)
+Search and Add Product to Cart (UI)
+
+Feature: amazonSearchFunction.feature
 
 Flow:
 
-* Navigate to Amazon
-* Search for AirPods
-* Open the first product
-* Verify the product title
-* Add items to the basket
-* Open the basket
-* Verify product and quantity
+Navigate to Amazon
+Search for product
+Open first search result
+Verify product page
+Add item to basket
+Verify item and quantity in cart
+Remove Product from Cart (UI)
 
----
-
-### Remove Product from Cart (UI)
-
-File: `removeProductFromCart.spec.ts`
+Feature: removeProductFromCart.feature
 
 Flow:
 
-* Search for product
-* Add product to cart
-* Navigate to basket
-* Remove product
-* Verify cart is empty
+Search for product
+Add product to cart
+Navigate to basket
+Remove product
+Verify removal confirmation
+Add Product to Cart via API and Verify in UI
 
----
-
-### Add Product to Cart via API and Verify in UI
-
-File: `addProductToCartViaApi.spec.js`
+File: addProductToCartViaApi.spec.js
 
 Flow:
 
-* Open product page
-* Add item to cart via UI
-* Retrieve cart cookie
-* Send API request to add item to cart
-* Validate response
-* Handle optional popup
-* Verify item appears in cart
+Open product page
+Add item via UI
+Retrieve cart cookie
+Send API request
+Validate API response
+Verify cart update in UI
+Hooks and Test Lifecycle
 
----
+The framework uses Cucumber hooks for test lifecycle management.
 
-## API and UI Integration
+Implemented hooks:
 
-This project demonstrates combining API and UI testing in a single flow.
+Before Hook
 
-The API is used to manipulate the application state directly, while the UI is used to verify the result from a user perspective.
+Used for:
 
-This approach improves execution speed and reduces flakiness compared to relying only on UI tests.
+browser launch
+browser context setup
+page initialization
+page object initialization
+After Hook
 
----
+Used for:
 
-## Running the Tests
+browser cleanup
+context cleanup
+AfterStep Hook
+
+Used for:
+
+automatic screenshot capture when a step fails
+
+Example:
+
+AfterStep(async function ({ result }) {
+
+  if (result?.status === Status.FAILED) {
+
+    await this.page.screenshot({
+      path: 'screenshot.png'
+    });
+
+  }
+
+});
+Custom World Constructor
+
+The framework uses a custom Cucumber World constructor instead of global variables.
+
+Scenario state is stored using:
+
+this.browser
+this.context
+this.page
+this.product
+
+This improves:
+
+scenario isolation
+framework scalability
+maintainability
+Tags
+
+The framework supports Cucumber tags for selective execution.
+
+Example:
+
+@Regression
+Scenario: remove AirPods from shopping basket
+
+Run regression tests:
+
+npx cucumber-js --tags "@Regression"
+Running the Tests
 
 Install dependencies:
 
-```bash
 npm install
-```
 
-Run all tests:
+Run all Cucumber tests:
 
-```bash
-npx playwright test
-```
+npx cucumber-js
 
-Run a specific test:
+Run in debug mode:
 
-```bash
-npx playwright test searchAndAddProductToCart.spec.ts
-```
+PWDEBUG=1 npx cucumber-js
 
----
+Run regression suite:
 
-## Project Structure
+npx cucumber-js --tags "@Regression"
 
-```
-tests/
-  searchAndAddProductToCart.spec.ts
-  removeProductFromCart.spec.ts
-  addProductToCartViaApi.spec.js
+Run a specific feature:
+
+npx cucumber-js features/removeProductFromCart.feature
+Project Structure
+features/
+  amazonSearchFunction.feature
+  removeProductFromCart.feature
+
+  step_definitions/
+    steps.ts
+
+  support/
+    hooks.ts
+    world.ts
 
 pageObjects/
   POManager.ts
   AmazonHomepage.ts
+  SearchResultsPage.ts
   AirPodsPage.ts
   BasketPage.ts
-```
 
----
+tests/
+  addProductToCartViaApi.spec.js
+Future Improvements
+Convert API test to TypeScript
+Add HTML reporting
+Add CI/CD integration
+Improve selector robustness
+Add environment configuration
+Add cross-browser execution
+Extend value streams (login, quantity updates, checkout flow)
+Add data-driven testing
+Author
 
-## Future Improvements
-
-* Convert API test to TypeScript
-* Improve selector robustness
-* Add reporting
-* Extend value streams (e.g. update quantity, login flow)
-
----
-
-## Author
-
-This project was created as part of learning test automation with Playwright, with a focus on building maintainable and structured tests around real user flows.
+This project was created as part of learning test automation with Playwright and Cucumber, with a focus on building scalable and maintainable automation frameworks around real-world user workflows.

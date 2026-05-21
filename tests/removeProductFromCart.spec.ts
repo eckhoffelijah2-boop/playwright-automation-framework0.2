@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { POManager } from '../pageObjects/POManager';
 
-test('value stream - remove product from cart', async ({ page }) => {
+test.only('value stream - remove product from cart', async ({ page }) => {
   const poManager = new POManager(page);
   const amazonHomePage = poManager.getAmazonHomePage();
   const airPodsPage = poManager.getAirPodsPage();
   const basketPage = poManager.getBasketPage();
+  const searchResultsPage = poManager.getSearchResultsPage();
 
   const product = 'AirPods';
 
@@ -16,7 +17,8 @@ test('value stream - remove product from cart', async ({ page }) => {
   await amazonHomePage.validAirPodSearch(product);
 
   // open first result
-  await page.locator('.a-link-normal.s-no-outline').first().click();
+  await searchResultsPage.declineCookies();
+  await searchResultsPage.clickOnResultItem();
 
   // verify product page
   await expect(airPodsPage.productTitle).toContainText(product);
@@ -28,12 +30,12 @@ test('value stream - remove product from cart', async ({ page }) => {
   await basketPage.goToBasket();
 
   // verify item is in cart
-  await expect(basketPage.cartItem).toContainText(product);
+  await expect(basketPage.cartItem(product)).toContainText(product);
 
   // remove item
-  await basketPage.removeItemFromCart();
+  await basketPage.removeItemFromCart(product);
 
   // verify item is removed 
-  await expect(basketPage.cartItem).toHaveCount(0);
+  await expect(basketPage.removedMessage(product)).toBeVisible();
   
 });

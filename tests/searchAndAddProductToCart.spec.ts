@@ -6,13 +6,16 @@ test('value stream - search and add product to cart', async ({ page }) => {
   const amazonHomePage = poManager.getAmazonHomePage();
   const airPodsPage = poManager.getAirPodsPage();
   const basketPage = poManager.getBasketPage();
+  const searchResultsPage = poManager.getSearchResultsPage();
+ 
   const product = 'AirPods';
  // amazon home Page
   await amazonHomePage.goTo();
   await amazonHomePage.validAirPodSearch(product);
  
   // airpods search page
-  await page.locator('.a-link-normal.s-no-outline').first().click();
+  await searchResultsPage.declineCookies();
+  await searchResultsPage.clickOnResultItem();
   
   //airpods page
   await expect(airPodsPage.productTitle).toContainText(product);
@@ -20,7 +23,7 @@ test('value stream - search and add product to cart', async ({ page }) => {
  
   //basket page
   await basketPage.goToBasket();
-  await expect(basketPage.cartItem).toContainText(product);
+  await expect(basketPage.cartItem(product)).toContainText(product);
   await expect(basketPage.quantityValue).toHaveText('2'); 
   
 });
